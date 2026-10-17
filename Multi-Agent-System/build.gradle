@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'jacoco' // ۱. اضافه کردن پلاگین جاکوکو
+    id 'jacoco'
 }
 
 group   = 'ise.mas'
@@ -14,7 +14,8 @@ dependencies {
     implementation 'io.github.jason-lang:jason-interpreter:3.3.0'
     implementation 'org.glassfish:javax.json:1.1.4'
     implementation 'javax.json:javax.json-api:1.1.4'
-    implementation group: 'org.json', name: 'json', version: '20230227'
+    // اصلاح نحوه تعریف پکیج برای سازگاری با نسخه‌های جدید گریدل
+    implementation 'org.json:json:20230227'
 
     testImplementation platform('org.junit:junit-bom:5.10.2')
     testImplementation 'org.junit.jupiter:junit-jupiter'
@@ -40,12 +41,12 @@ compileJava {
 
 test {
     useJUnitPlatform()
-    finalizedBy jacocoTestReport // ۲. اجرای خودکار گزارش جاکوکو پس از اتمام تست‌ها
 }
 
-// ۳. تنظیمات گزارش‌گیری جاکوکو
+// اصلاح بخش جاکوکو و رفع خطای وابستگی ضمنی با تسک jar
 jacocoTestReport {
-    dependsOn test // تست‌ها باید قبل از ساخت گزارش اجرا شوند
+    dependsOn test
+    mustRunAfter jar
     reports {
         xml.required = true
         html.required = true
