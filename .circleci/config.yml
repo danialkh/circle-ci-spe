@@ -8,17 +8,18 @@ orbs:
 jobs:
   # ۱. بیلد و تست جاوا
   test-and-build-java:
-    docker:
-      - image: cimg/openjdk:21.0
-    steps:
-      - checkout
-      - run:
-          name: Install Gradle & Run Build
-          command: |
-            cd Multi-Agent-System
-            # نصب گریدل به صورت مستقیم روی کانتینر در صورت نبود رپر
-            sudo apt-get update && sudo apt-get install -y gradle
-            gradle clean test jacocoTestReport
+      docker:
+        - image: cimg/openjdk:21.0
+      steps:
+        - checkout
+        - run:
+            name: Fix SSL Certificates & Run Gradle Build
+            command: |
+              sudo rm -rf /etc/ssl/certs/java/cacerts || true
+              sudo apt-get update && sudo apt-get install -y --reinstall ca-certificates-java || true
+              cd Multi-Agent-System
+              chmod +x gradlew
+              ./gradlew clean test jacocoTestReport
 
   # ۲. تست و لینت پایتون و مدل ML (اصلاح ایمیج به python:3.9-slim برای رفع خطای manifest)
   test-and-lint-python:
