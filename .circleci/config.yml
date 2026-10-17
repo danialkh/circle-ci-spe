@@ -13,11 +13,12 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Run Gradle Build and Tests
+          name: Install Gradle & Run Build
           command: |
             cd Multi-Agent-System
-            chmod +x gradlew
-            ./gradlew clean test || ./gradlew build
+            # نصب گریدل به صورت مستقیم روی کانتینر در صورت نبود رپر
+            sudo apt-get update && sudo apt-get install -y gradle
+            gradle clean test jacocoTestReport
 
   # ۲. تست و لینت پایتون و مدل ML (اصلاح ایمیج به python:3.9-slim برای رفع خطای manifest)
   test-and-lint-python:
