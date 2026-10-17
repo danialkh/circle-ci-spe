@@ -1,4 +1,17 @@
+version: '3.8'
+
 services:
+  # سرویس چندعاملی جاوا (Fleet Coordination & Service Booking) با Gradle و Java 21
+  multi-agent-system-service:
+    image: eclipse-temurin:21-jdk-jammy
+    working_dir: /app/Multi-Agent-System
+    volumes:
+      - .:/app
+    environment:
+      - JAVA_HOME=/opt/java/openjdk
+    command: ./gradlew run
+
+  # سرویس سیستم‌های تعبیه‌سوزی و IoT (پایتون + Node.js)
   embedded-system-service:
     image: python:3.9-alpine
     working_dir: /app/Embedded-Systems-gs-main
@@ -16,6 +29,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
       
+  # سرویس هوش مصنوعی و یادگیری ماشین (پایتون + JRE برای اجرای مدل‌های وابسته به جاوا)[cite: 1]
   ml-service:
     image: python:3.9-slim
     working_dir: /app/ML-model
@@ -24,6 +38,7 @@ services:
     command: >
       bash -c "apt-get update && apt-get install -y default-jre && echo '8' | python3 main.py"
 
+  # سرویس مدیریت کانتینرها (with-red)
   with-red-service:
     image: docker:cli
     working_dir: /app/with-red
@@ -33,14 +48,8 @@ services:
         target: /app/with-red
       - /var/run/docker.sock:/var/run/docker.sock
     command: sh -c "apk add --no-cache docker-compose && docker compose -f docker-compose.yml down --remove-orphans && docker compose -f docker-compose.yml up"
-#
-#  multi-agent-system-service:
-#    image: eclipse-temurin:21-jdk-jammy
-#    working_dir: /app/Multi-Agent-System
-#    volumes:
-#      - .:/app
-#    command: ./gradlew run
 
+  # سرویس سیستم بک‌اند (MAS System Node Server)
   mas-system-service:
     image: docker:cli
     working_dir: /app/back
