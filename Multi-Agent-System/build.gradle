@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'jacoco' // ۱. اضافه کردن پلاگین جاکوکو
 }
 
 group   = 'ise.mas'
@@ -39,6 +40,16 @@ compileJava {
 
 test {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport // ۲. اجرای خودکار گزارش جاکوکو پس از اتمام تست‌ها
+}
+
+// ۳. تنظیمات گزارش‌گیری جاکوکو
+jacocoTestReport {
+    dependsOn test // تست‌ها باید قبل از ساخت گزارش اجرا شوند
+    reports {
+        xml.required = true
+        html.required = true
+    }
 }
 
 task run(type: JavaExec, dependsOn: compileJava) {
